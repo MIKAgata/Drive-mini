@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Drive System</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-light">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="admin.html">
+                <i class="bi bi-shield-lock-fill text-warning"></i>
+                <strong>Admin Dashboard</strong>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="admin.html">
+                            <i class="bi bi-file-earmark-text"></i> Manage Files
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="home.html">
+                            <i class="bi bi-house-door"></i> My Files
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i>
+                            <span id="navUsername">Admin</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#" id="navUserEmail"><i class="bi bi-envelope"></i> <span id="userEmail"></span></a></li>
+                            <li><span class="dropdown-item"><i class="bi bi-shield-check"></i> Role: <strong>Admin</strong></span></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" id="logoutBtn"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <!-- Header Section -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h3><i class="bi bi-folder-check"></i> File Management</h3>
+                        <p class="text-muted mb-0">Kelola semua file yang diupload oleh user</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="loadAllFiles()">
+                        <i class="bi bi-arrow-clockwise"></i> Refresh
+                    </button>
+                </div>
+
+                <!-- Alert Container -->
+                <div id="alert-container"></div>
+
+                <!-- Stats Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="card border-primary">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="text-muted mb-1">Total Files</h6>
+                                        <h3 class="mb-0" id="totalFiles">0</h3>
+                                    </div>
+                                    <i class="bi bi-file-earmark-text text-primary" style="font-size: 2.5rem;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="card border-warning">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="text-muted mb-1">Pending</h6>
+                                        <h3 class="mb-0 text-warning" id="pendingFiles">0</h3>
+                                    </div>
+                                    <i class="bi bi-clock-history text-warning" style="font-size: 2.5rem;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="card border-success">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="text-muted mb-1">Accepted</h6>
+                                        <h3 class="mb-0 text-success" id="acceptedFiles">0</h3>
+                                    </div>
+                                    <i class="bi bi-check-circle text-success" style="font-size: 2.5rem;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="card border-danger">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="text-muted mb-1">Rejected</h6>
+                                        <h3 class="mb-0 text-danger" id="rejectedFiles">0</h3>
+                                    </div>
+                                    <i class="bi bi-x-circle text-danger" style="font-size: 2.5rem;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filter & Search -->
+                <div class="card shadow-sm mb-3">
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" id="searchInput" placeholder="Cari berdasarkan nama file atau username...">
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-select" id="statusFilter">
+                                    <option value="">Semua Status</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="accepted">Accepted</option>
+                                    <option value="rejected">Rejected</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-select" id="typeFilter">
+                                    <option value="">Semua Tipe</option>
+                                    <option value="pdf">PDF</option>
+                                    <option value="doc">DOC/DOCX</option>
+                                    <option value="xls">XLS/XLSX</option>
+                                    <option value="image">Image</option>
+                                    <option value="archive">Archive</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-outline-secondary w-100" onclick="resetFilters()">
+                                    <i class="bi bi-x-circle"></i> Reset
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Files Table -->
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <!-- Loading Spinner -->
+                        <div id="loadingSpinner" class="text-center py-5 d-none">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2">Memuat data file...</p>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div id="emptyState" class="text-center py-5 d-none">
+                            <i class="bi bi-inbox" style="font-size: 4rem; color: #ccc;"></i>
+                            <p class="text-muted mt-3">Tidak ada file ditemukan</p>
+                        </div>
+
+                        <!-- Table -->
+                        <div class="table-responsive" id="tableContainer">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>Nama File</th>
+                                        <th>Tipe</th>
+                                        <th>Ukuran</th>
+                                        <th>Tanggal Upload</th>
+                                        <th>Status</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="filesTableBody">
+                                    <!-- Data akan ditampilkan di sini via JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update Status Modal -->
+    <div class="modal fade" id="updateStatusModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Status File</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>File: <strong id="modalFileName"></strong></p>
+                    <p>User: <strong id="modalUserName"></strong></p>
+                    <hr>
+                    <div class="mb-3">
+                        <label class="form-label">Pilih Status</label>
+                        <select class="form-select" id="newStatus">
+                            <option value="pending">Pending</option>
+                            <option value="accepted">Accepted</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+                    <input type="hidden" id="fileIdToUpdate">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" onclick="updateFileStatus()">
+                        <i class="bi bi-check-circle"></i> Update Status
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="js/admin.js"></script>
+</body>
+</html>

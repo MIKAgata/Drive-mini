@@ -382,9 +382,7 @@ def delete_file(file_id):
         print(f"Delete error: {e}")
         return jsonify({'message': f'Terjadi kesalahan: {str(e)}'}), 500
 
-# ================================
-# ADMIN ROUTES
-# ================================
+
 
 @app.route('/api/files/admin/all-files', methods=['GET'])
 @admin_required
